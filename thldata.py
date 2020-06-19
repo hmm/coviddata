@@ -255,7 +255,7 @@ class THLTartunnat(THLData):
 
 class THLIat(THLData):
     name = "iat"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328x"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328"
 
 
     def run(self, output):
