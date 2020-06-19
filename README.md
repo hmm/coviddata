@@ -10,23 +10,23 @@ Result is written to a file as jsonp (json separated by newlines). Default outpu
 
 Fetches data from Finnish Health Institutes open data interface: https://thl.fi/fi/tilastot-ja-data/aineistot-ja-palvelut/avoin-data/varmistetut-koronatapaukset-suomessa-covid-19-
 
-### ./thldata.py tartunnat
+### thldata.py tartunnat
 
 Detected confirmed daily infections per area (sairaanhoitopiiri)
 
-### ./thldata.py kunnat
+### thldata.py kunnat
 
 Detected confirmed infections per municipality
 
-### ./thldata.py alueet
+### thldata.py alueet
 
 Summary of infections per area (sairaanhoitopiiri)
 
-### ./thldata.py testit
+### thldata.py testit
 
 Daily number of performed tests
 
-### ./thldata.py iat
+### thldata.py iat
 
 Ages of the people with confirmed infections
 
@@ -36,7 +36,7 @@ Ages of the people with confirmed infections
 Fetches data from https://worldometers.info/coronavirus
 
 
-### ./womparser.py countries
+### womparser.py countries
 
 Fetches current information from all countries:
  - country
@@ -52,7 +52,7 @@ Fetches current information from all countries:
  - new_deaths
  - serious_critical
 
-### ./womparser.py details
+### womparser.py details
 
 Fetches daily information per country:
  - cases
