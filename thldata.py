@@ -110,6 +110,7 @@ class THLData(object):
 
     def run(self, output):
         data = requests.get(self.url)
+        data.raise_for_status()
         p = Parser(data=data.json())
         lastarea = None
         for data in p.parse(mapper=self):
@@ -139,6 +140,7 @@ class THLKunnat(THLData):
 
     def run(self, output):
         data = requests.get(self.url)
+        data.raise_for_status()
         p = Parser(data=data.json())
         lastarea = None
         combined = MunicipalityData()
@@ -177,6 +179,7 @@ class THLAlueet(THLData):
 
     def run(self, output):
         data = requests.get(self.url)
+        data.raise_for_status()
         p = Parser(data=data.json())
         lastweekarea = None
         combined = AreaData()
@@ -214,6 +217,7 @@ class THLTestit(THLData):
 
     def run(self, output):
         data = requests.get(self.url)
+        data.raise_for_status()
         p = Parser(data=data.json())
         lastdate = None
         combined = TestsData()
@@ -251,11 +255,12 @@ class THLTartunnat(THLData):
 
 class THLIat(THLData):
     name = "iat"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328x"
 
 
     def run(self, output):
         data = requests.get(self.url)
+        data.raise_for_status()
         p = Parser(data=data.json())
         combined = DemographyData()
         for data in p.parse(mapper=self):

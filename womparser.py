@@ -52,6 +52,7 @@ class WOMParser(object):
         
     def parsecountries(self):
         r = requests.get(self.url)
+        r.raise_for_status()
         page = html.fromstring(r.content)
 
         #table = page.xpath('//*[@id="main_table_countries_today"]/tbody[1]')[0]
@@ -126,6 +127,7 @@ class WOMParser(object):
 
     def parsepopulation(self):
         r = requests.get(self.url)
+        r.raise_for_status()
         page = html.fromstring(r.content)
 
         table = page.xpath('//*[@id="example2"]/tbody[1]')[0]
@@ -156,6 +158,7 @@ class WOMParser(object):
 
     def parsedetails(self):
         r = requests.get(self.url)
+        r.raise_for_status()
         page = html.fromstring(r.content)
 
         table = page.xpath('//*[@id="main_table_countries_yesterday"]/tbody[1]')[0]
@@ -182,6 +185,7 @@ class WOMParser(object):
 
     def parsecountry(self, country, url):
         r = requests.get(urllib.parse.urljoin(self.url, url))
+        r.raise_for_status()
         page = html.fromstring(r.content)
         
         script = page.xpath('//div[@class="tabbable-panel-cases"]/following-sibling::script[1]')
