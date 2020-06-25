@@ -2,6 +2,8 @@
 
 import sys, os, json, requests, inspect, optparse, datetime
 
+requestheaders = {'User-Agent': 'thldata'}
+
 class ParserData(object):
     type = None
 
@@ -109,7 +111,7 @@ class THLData(object):
         self.datadate = datetime.date.today() - datetime.timedelta(days=offset)
 
     def run(self, output):
-        data = requests.get(self.url)
+        data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
         lastarea = None
@@ -139,7 +141,7 @@ class THLKunnat(THLData):
     }
 
     def run(self, output):
-        data = requests.get(self.url)
+        data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
         lastarea = None
@@ -178,7 +180,7 @@ class THLAlueet(THLData):
     }
 
     def run(self, output):
-        data = requests.get(self.url)
+        data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
         lastweekarea = None
@@ -216,7 +218,7 @@ class THLTestit(THLData):
     }
 
     def run(self, output):
-        data = requests.get(self.url)
+        data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
         lastdate = None
@@ -259,7 +261,7 @@ class THLIat(THLData):
 
 
     def run(self, output):
-        data = requests.get(self.url)
+        data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
         combined = DemographyData()
