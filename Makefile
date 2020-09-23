@@ -7,6 +7,7 @@ thl: thl-alueet thl-kunnat thl-testit thl-iat thl-tartunnat
 
 wom: wom-countries wom-details
 
+ttr: ttr-ages
 
 
 thl-%:
@@ -14,3 +15,6 @@ thl-%:
 
 wom-%:
 	./womparser.py $*
+
+ttr-%:
+	./ttrdata.py $*
