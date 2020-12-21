@@ -136,7 +136,7 @@ class THLKunnat(THLData):
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=hcdmunicipality2020-445268L&column=measure-141082"
 
     fieldmap = {
-        "dateweek2020010120201231": "date",
+        "dateweek20200101": "date",
         "hcdmunicipality2020": "area",
     }
 
@@ -167,10 +167,10 @@ class THLKunnat(THLData):
 
 class THLAlueet(THLData):
     name = "alueet"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443686&row=hcdmunicipality2020-445222&column=measure-141082"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030&row=hcdmunicipality2020-445222&column=measure-141082"
 
     fieldmap = {
-        "dateweek2020010120201231": "week",
+        "dateweek20200101": "week",
         "hcdmunicipality2020": "area",
     }
 
@@ -206,10 +206,10 @@ class THLAlueet(THLData):
 
 class THLTestit(THLData):
     name = "testit"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443702L&column=measure-141082"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-508804L&column=measure-141082"
 
     fieldmap = {
-        "dateweek2020010120201231": "date",
+        "dateweek20200101": "date",
         "hcdmunicipality2020": "area",
     }
 
@@ -243,11 +243,10 @@ class THLTestit(THLData):
 class THLTartunnat(THLData):
     name = "tartunnat"
     datatype = InfectionData
-
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443702L&column=hcdmunicipality2020-445222L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-508804L&column=hcdmunicipality2020-445222L"
 
     fieldmap = {
-        "dateweek2020010120201231": "date",
+        "dateweek20200101": "date",
         "hcdmunicipality2020": "area",
     }
 
