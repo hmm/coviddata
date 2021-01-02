@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, os, json, datetime, re, urllib, time, optparse
+import os, json, datetime, re, urllib, time, argparse
 
 import requests
 
 from lxml import html
 
 
-class ParserData(object):
+class ParserData():
     
     def __init__(self, **values):
         self.__values = values
@@ -19,13 +19,13 @@ class ParserData(object):
     def __setattr__(self, attr, value):
         if not attr.startswith('_'):
             self.__values[attr] = value
-        super(ParserData, self).__setattr__(attr, value)
+        super().__setattr__(attr, value)
     
     def tojson(self):
         return json.dumps(self.__values, sort_keys=True)
 
     def __str__(self):
-        return str(self.values)
+        return str(self.__values)
 
 class CountryData(ParserData):
     type = 'countrydata'
@@ -34,10 +34,10 @@ class DetailData(ParserData):
     type = 'detaildata'
 
 class PopulationData(ParserData):
-   type = 'populationdata'
+    type = 'populationdata'
 
 
-class WOMParser(object):
+class WOMParser():
 
     def __init__(self, url):
         self.url = url
@@ -91,7 +91,6 @@ class WOMParser(object):
                 population = self.parsenumber(links[1].text)
             else:
                 population = data[baseidx+13]
-                
 
             if False:
                 print("Country: ", country)
@@ -144,7 +143,7 @@ class WOMParser(object):
 
             population = data[2]
 
-            if 0:
+            if False:
                 print("Country: ", country)
                 print("Population: ", population)
 
@@ -173,7 +172,6 @@ class WOMParser(object):
             country = country_elem[0].text
             url = country_elem[0].attrib.get('href')
             (cases, deaths, active) = self.parsecountry(country, url)
-
             detaildata = DetailData(
                 country=country,
                 cases = cases,
@@ -185,20 +183,33 @@ class WOMParser(object):
 
     def parsecountry(self, country, url):
         r = requests.get(urllib.parse.urljoin(self.url, url))
-        r.raise_for_status()
         page = html.fromstring(r.content)
         
-        script = page.xpath('//div[@class="tabbable-panel-cases"]/following-sibling::script[1]')
-        if script:
-            cases = self.parsescript(script[0], "Cases")
-        else:
-            cases = []
+        if False:
+            script = page.xpath('//div[@id="graph-cases-daily"]/following-sibling::script[1]')
+            if script:
+                cases = self.parsescript(script[0], "Daily Cases")
+            else:
+                cases = []
 
-        script = page.xpath('//div[@class="tabbable-panel-deaths"]/following-sibling::script[1]')
-        if script:
-            deaths = self.parsescript(script[0], "Deaths")
+            script = page.xpath('//div[@id="graph-deaths-daily"]/following-sibling::script[1]')
+            if script:
+                deaths = self.parsescript(script[0], "Daily Deaths")
+            else:
+                deaths = []
         else:
-            deaths = []
+            script = page.xpath('//div[@class="tabbable-panel-cases"]/following-sibling::script[1]')
+            if script:
+                cases = self.parsescript(script[0], "Cases")
+            else:
+                cases = []
+
+            script = page.xpath('//div[@class="tabbable-panel-deaths"]/following-sibling::script[1]')
+            if script:
+                deaths = self.parsescript(script[0], "Deaths")
+            else:
+                deaths = []
+            
 
         script = page.xpath('//div[@id="graph-active-cases-total"]/following-sibling::script[1]')
         if script:
@@ -216,7 +227,7 @@ class WOMParser(object):
         except ValueError:
             xaxis = lines.index('            xAxis: {')
         datevalues = self.parsevalues(lines[xaxis+1])
-        dates = [self.parsedate(d) for d in datevalues]
+        dates = self.parsedates(datevalues)
         try:
             vidx = lines.index("            name: '%s'," % attribute)
         except ValueError:
@@ -228,20 +239,30 @@ class WOMParser(object):
         return list(zip(dates, values))
 
     def parsevalues(self, line):
-        r = re.compile(".*(\[.*?\]).*")
+        r = re.compile(r".*(\[.*?\]).*")
         v = r.match(line)
         parsed = json.loads(v.group(1))
         return parsed
 
-    def parsedate(self, text):
-        ts = time.strptime(text, '%b %d')
-        d = datetime.date(2020, ts.tm_mon, ts.tm_mday)
-        return d.strftime('%Y-%m-%d')
+    def parsedates(self, datevalues):
+        dates = []
 
+        baseyear = 2020
+        prevd = None
+        
+        for text in datevalues:
+            ts = time.strptime(text, '%b %d')
+            d = datetime.date(baseyear, ts.tm_mon, ts.tm_mday)
+            if prevd and prevd > d:
+                baseyear += 1
+                d = datetime.date(baseyear, ts.tm_mon, ts.tm_mday)
+            prevd = d
+            dates.append(d.strftime('%Y-%m-%d'))
+        return dates
 
 def main():
-    p = optparse.OptionParser()
-    p.add_option(
+    p = argparse.ArgumentParser()
+    p.add_argument(
         "-s",
         "--stdout",
         action="store_true",
@@ -249,10 +270,10 @@ def main():
         default=False,
         help="output to stdout",
     )
-    p.add_option(
+    p.add_argument(
         "-C", "--csv", action="store_true", dest="csv", default=False, help="csv mode"
     )
-    p.add_option(
+    p.add_argument(
         "-f",
         "--outputfile",
         action="store",
@@ -260,7 +281,7 @@ def main():
         default=None,
         help="outputfile name",
     )
-    p.add_option(
+    p.add_argument(
         "-o",
         "--overwrite",
         action="store_true",
@@ -268,16 +289,13 @@ def main():
         default=False,
         help="overwrite existing outputfile",
     )
+    p.add_argument("dataset", choices=['countries', 'details', 'population'])
 
-    (options, args) = p.parse_args()
-    if not args:
-        usage()
-        return
-    dataset = args[0]
+    options = p.parse_args()
+    dataset = options.dataset
 
     cov_url = 'https://www.worldometers.info/coronavirus/'
     pop_url = 'https://www.worldometers.info/world-population/population-by-country/'
-
 
     if options.outputfile:
         outputfile = options.outputfile
@@ -318,4 +336,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
