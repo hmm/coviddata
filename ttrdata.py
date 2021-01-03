@@ -48,8 +48,8 @@ class UrlGen:
     }
 
     time = {
-        '2020-09': 'time-429386',
         '2020': 'time-429400',
+        '2021': 'time-510113',
     }
 
     @classmethod
@@ -81,14 +81,15 @@ class AgeParser:
         self.data = {}
 
     def run(self, output):
-        for agegroup in UrlGen.agegroups:
-            for sex in ['all', 'men', 'women']:
-                for measure in ['cases', 'incidence']:
-                    url = UrlGen.genurl(agegroup=agegroup, sex=sex, measure=measure)
-                    print(agegroup, sex, measure, url)
-                    data = requests.get(url, headers=requestheaders)
-                    data.raise_for_status()
-                    self.parse(agegroup, sex, measure, data)
+        for year in ['2020', '2021']:
+            for agegroup in UrlGen.agegroups:
+                for sex in ['all', 'men', 'women']:
+                    for measure in ['cases', 'incidence']:
+                        url = UrlGen.genurl(time=year, agegroup=agegroup, sex=sex, measure=measure)
+                        print(agegroup, sex, measure, url)
+                        data = requests.get(url, headers=requestheaders)
+                        data.raise_for_status()
+                        self.parse(year, agegroup, sex, measure, data)
 
         for d in self.generate():
             print(d, file=output)
@@ -98,7 +99,7 @@ class AgeParser:
             return "all"
         return agegroup.replace('-', '_')
 
-    def parse(self, agegroup, sex, measure, pagedata):
+    def parse(self, year, agegroup, sex, measure, pagedata):
         reader = csv.DictReader(codecs.iterdecode(pagedata.iter_lines(), 'utf-8'), delimiter=';')
         #csvdata = [l for l in reader]
 
@@ -118,6 +119,15 @@ class AgeParser:
                 .setdefault(l['time'], {}) \
                 .setdefault(sex, {}) \
                 [attrname] = value
+
+            if l['time'] in ['2020', '2021']:
+                total = self.data.get(l['Alue'], {}).get('total', {}).get(sex, {}).get(attrname, 0)
+                
+                self.data.setdefault(l['Alue'], {}) \
+                    .setdefault('total', {}) \
+                    .setdefault(sex, {}) \
+                    [attrname] = value + total
+
 
     def generate(self):
         for area in self.data:
@@ -150,7 +160,6 @@ def usage():
     print("CMDS: ", ", ".join(l))
 
 
-
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument(
@@ -180,9 +189,20 @@ def parse_args():
         default=False,
         help="overwrite existing outputfile",
     )
+    p.add_argument(
+        "-d",
+        "--dateoffset",
+        action="store",
+        type=int,
+        dest="dateoffset",
+        default=0,
+        help="Offset date by X days",
+    )
     p.add_argument("cmd", choices=datasets.keys())
 
     return p.parse_args()
+
+
 
 def main():
     args = parse_args()
@@ -192,7 +212,7 @@ def main():
         return
     dataset = datasets.get(args.cmd)
     if dataset:
-        ds = dataset()
+        ds = dataset(offset=args.dateoffset)
         if args.write_stdout:
             ds.run(sys.stdout)
         else:
