@@ -3,7 +3,7 @@
 
 all: thl wom
 
-thl: thl-alueet thl-kunnat thl-testit thl-iat thl-tartunnat
+thl: thl-alueet thl-kunnat thl-testit thl-iat thl-tartunnat thl-kuolemat thl-kuolemaiat thl-ageweeks
 
 wom: wom-countries wom-details
 

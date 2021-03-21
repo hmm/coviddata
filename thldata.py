@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import sys, os, json, requests, inspect, optparse, datetime
+import sys, os, json, inspect, optparse, datetime
+import requests
 
 requestheaders = {'User-Agent': 'thldata'}
 
-class ParserData(object):
+class ParserData():
     type = None
 
     def __init__(self, data=None):
@@ -15,8 +16,8 @@ class ParserData(object):
             self._data['type'] = self.type
         for attr in data:
             value = data[attr]
-            if type(value) is dict:
-                value = Data(value)
+            if isinstance(value, dict):
+                value = ParserData(value)
             setattr(self, attr, value)
 
     def __setattr__(self, attr, value):
@@ -41,14 +42,22 @@ class MunicipalityData(ParserData):
 class DemographyData(ParserData):
     type = "demography"
 
+class DeathDemographyData(ParserData):
+    type = "deathdemography"
+
+class AgeWeekData(ParserData):
+    type = "ageweeks"
+
 class TestsData(ParserData):
     type = "tests"
 
 class InfectionData(ParserData):
     type = "infection"
 
+class DeathsData(ParserData):
+    type = "deaths"
 
-class Dimension(object):
+class Dimension():
     def __init__(self, name, size):
         self.name = name
         self.size = size
@@ -57,7 +66,7 @@ class Dimension(object):
         return "Dimension <%s:%d>" % (self.name, self.size)
 
 
-class Parser(object):
+class Parser():
     def __init__(self, path=None, data=None):
         if path:
             with open(path) as fp:
@@ -102,8 +111,10 @@ class Parser(object):
             yield d
 
 
-class THLData(object):
+class THLData():
     name = None
+    url = None
+
     valuemap = {}
     fieldmap = {}
 
@@ -114,7 +125,6 @@ class THLData(object):
         data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
-        lastarea = None
         for data in p.parse(mapper=self):
             ddata = self.datatype(data.values())
             ddata.datadate = str(self.datadate)
@@ -177,6 +187,7 @@ class THLAlueet(THLData):
     valuemap = {
         "Kaikki Alueet": "Koko maa",
         "Aika": "Yhteensä",
+        "Kaikki ajat": "Yhteensä",
     }
 
     def run(self, output):
@@ -198,6 +209,8 @@ class THLAlueet(THLData):
                 combined.population = int(data.value)
             elif data.measure == "Testausmäärä":
                 combined.tests = int(data.value)
+            elif data.measure == "Kuolemantapausten lukumäärä":
+                combined.deaths = int(data.value)
 
             combined.datadate = str(self.datadate)
 
@@ -235,8 +248,6 @@ class THLTestit(THLData):
             elif data.measure == "Testausmäärä":
                 combined.tests = int(data.value)
 
-            
-
         print(combined.tojson(), file=output)
 
 
@@ -254,10 +265,10 @@ class THLTartunnat(THLData):
         "Kaikki Alueet": "Koko maa",
     }
 
+
 class THLIat(THLData):
     name = "iat"
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328"
-
 
     def run(self, output):
         data = requests.get(self.url, headers=requestheaders)
@@ -274,6 +285,109 @@ class THLIat(THLData):
 
         print(combined.tojson(), file=output)
 
+
+class THLIkaviikot(THLData):
+    name = "ageweeks"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030&row=ttr10yage-444309&column=measure-444833"
+
+    fieldmap = {
+        "dateweek20200101": "week",
+    }
+
+    valuemap = {
+        "Kaikki ikäryhmät": "total",
+    }
+    
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        combined = AgeWeekData()
+        lastweek = None
+        for data in p.parse(mapper=self):
+            if lastweek and data.week != lastweek:
+                print(combined.tojson(), file=output)
+                combined = AgeWeekData()
+            lastweek = data.week
+            if data.week == 'Aika' or data.week == 'Kaikki ajat':
+                continue
+            try:
+                value = int(data.value)
+            except ValueError:
+                value = None
+            setattr(combined, data.ttr10yage, value)
+            combined.datadate = str(self.datadate)
+            combined.week = self.parseweek(data.week)
+
+        if hasattr(combined, 'total'):
+            print(combined.tojson(), file=output)
+
+    def parseweek(self, week):
+        (_, year, _, weeknum) = week.split()
+        return str(datetime.date.fromisocalendar(int(year), int(weeknum), 1))
+
+
+class THLKuolemat(THLData):
+    name = "kuolemat"
+    datatype = DeathsData
+
+    #url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-443702L&column=measure-492118"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-508804L&column=measure-492118"
+
+    fieldmap = {
+        "dateweek20200101": "date",
+        "hcdmunicipality2020": "area",
+    }
+
+    valuemap = {
+        "Kaikki Alueet": "Koko maa",
+    }
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        lastdate = None
+        combined = DeathsData()
+        for data in p.parse(mapper=self):
+            if lastdate and data.date != lastdate:
+                print(combined.tojson(), file=output)
+                combined = DeathsData()
+            lastdate = data.date
+            combined.date = data.date
+            combined.datadate = str(self.datadate)
+            if data.measure == "Tapausten lukumäärä":
+                combined.cases = int(data.value)
+            elif data.measure == "Kuolemantapausten lukumäärä":
+                combined.deaths = int(data.value)
+
+            
+
+        print(combined.tojson(), file=output)
+
+class THLIat2(THLData):
+    name = "kuolemaiat"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?column=ttr10yage-444309,sex-444328&row=measure-492118"
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        combined = DeathDemographyData()
+        for data in p.parse(mapper=self):
+            try:
+                datavalue = int(data.value)
+            except ValueError:
+                datavalue = None
+                
+            if data.sex == "Kaikki sukupuolet":
+                setattr(combined, data.ttr10yage, datavalue)
+            elif data.ttr10yage == "Kaikki ikäryhmät":
+                setattr(combined, data.sex, datavalue)
+
+        combined.datadate = str(self.datadate)
+
+        print(combined.tojson(), file=output)
 
 
 datasets = {}
