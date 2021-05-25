@@ -57,6 +57,9 @@ class InfectionData(ParserData):
 class DeathsData(ParserData):
     type = "deaths"
 
+class HospitalData(ParserData):
+    type = "hospital"
+
 class Dimension():
     def __init__(self, name, size):
         self.name = name
@@ -386,6 +389,61 @@ class THLIat2(THLData):
                 setattr(combined, data.sex, datavalue)
 
         combined.datadate = str(self.datadate)
+
+        print(combined.tojson(), file=output)
+
+class THLSairaalat(THLData):
+    name = "sairaalat"
+    datatype = HospitalData
+
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19care/fact_epirapo_covid19care.json?row=dateweek20200101-508804L&row=erva-456367L&column=measure-547523.547516.456732.547531"
+
+    fieldmap = {
+        "dateweek20200101": "date",
+        "erva": "area",
+    }
+
+    valuemap = {
+        "Kaikki erityisvastuualueet": "Koko maa",
+        "Helsingin yliopistollisen keskussairaalan erityisvastuualue": "HYKS",
+        "Kuopion yliopistollisen sairaalan erityisvastuualue": "KYS",
+        "Oulun yliopistollisen sairaalan erityisvastuualue": "OYS",
+        "Tampereen yliopistollisen sairaalan erityisvastuualue": "TAYS",
+        "Turun yliopistollisen sairaalan erityisvastuualue": "TYKS",
+
+        "Käynnissä olevat osastojaksot perusterveydenhuollon osastolla": "perus",
+        "Käynnissä olevat osastojaksot erikoissairaanhoidon osastoilla": "erikois",
+        "Käynnissä olevat tehohoitojaksot": "teho",
+        "Käynnissä olevat vuodeosastojaksot (ennen 7.12.2020)": "vuode",
+    }
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        lastdate = None
+        lastarea = None
+        combined = HospitalData()
+        for data in p.parse(mapper=self):
+            if lastdate and (data.date != lastdate or data.area != lastarea):
+                print(combined.tojson(), file=output)
+                combined = HospitalData()
+            lastdate = data.date
+            lastarea = data.area
+            combined.date = data.date
+            combined.datadate = str(self.datadate)
+            combined.area = data.area
+            #print(data.tojson())
+            if data.measure == "perus":
+                combined.basic = int(data.value)
+            elif data.measure == "erikois":
+                combined.special = int(data.value)
+            elif data.measure == "teho":
+                combined.intensive = int(data.value)
+            elif data.measure == "vuode":
+                combined.normal = int(data.value)
+
+            
 
         print(combined.tojson(), file=output)
 
