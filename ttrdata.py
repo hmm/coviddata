@@ -220,7 +220,7 @@ def main():
                 outputfile = args.outputfile
             else:
                 outputfile = ds.getfilename()
-            if os.path.exists(outputfile) and not args.overwrite:
+            if os.path.exists(outputfile) and os.path.getsize(outputfile) > 0 and not options.overwrite:
                 print("%s exists" % outputfile)
                 return
             with open(outputfile, 'w') as fp:

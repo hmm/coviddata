@@ -443,8 +443,6 @@ class THLSairaalat(THLData):
             elif data.measure == "vuode":
                 combined.normal = int(data.value)
 
-            
-
         print(combined.tojson(), file=output)
 
 
@@ -517,7 +515,7 @@ def main():
                 outputfile = options.outputfile
             else:
                 outputfile = ds.getfilename()
-            if os.path.exists(outputfile) and not options.overwrite:
+            if os.path.exists(outputfile) and os.path.getsize(outputfile) > 0 and not options.overwrite:
                 print("%s exists" % outputfile)
                 return
             with open(outputfile, 'w') as fp:
