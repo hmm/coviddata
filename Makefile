@@ -9,7 +9,7 @@ wom: wom-countries wom-details
 
 ttr: ttr-ages
 
-vax: vax-coverage vax-weeks vax-product vax-population vax-municipalities
+vax: vax-coverage vax-weeks vax-product vax-population vax-municipalities vax-productareas vax-days
 
 
 thl-%:

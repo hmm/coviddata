@@ -20,13 +20,19 @@ class VaxPopData(ParserData):
 class VaxProdData(ParserData):
     type = "vaxproduct"
 
+class VaxProdAreaData(ParserData):
+    type = "vaxproductarea"
+
 class VaxMunicipalityData(ParserData):
     type = "vaxmunicipalities"
+
+class VaxDayData(ParserData):
+    type = "vaxdays"
 
 class VaxWeeks(THLData):
     name = "vaxweeks"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.&column=measure-533175&column=cov_vac_age-518413"    
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.&column=measure-533175&column=cov_vac_age-518413"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -60,7 +66,10 @@ class VaxWeeks(THLData):
             combined.area = data.area
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
-            setattr(combined, data.age, int(data.value))
+            if data.value == '..':
+                setattr(combined, "doses-"+data.age, None)
+            else:
+                setattr(combined, "doses-"+data.age, int(data.value))
             
         print(combined.tojson(), file=output)
 
@@ -68,7 +77,8 @@ class VaxWeeks(THLData):
 class VaxCoverage(THLData):
     name = "vaxcoverage"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-518413"    
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-518413"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -102,9 +112,13 @@ class VaxCoverage(THLData):
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
             if data.measure == "Rokotettuja henkilöitä":
+                setattr(combined, "persons-"+data.age, int(data.value))
+            elif data.measure == "Annettuja annoksia":
                 setattr(combined, "doses-"+data.age, int(data.value))
             elif data.measure == "Rokotuskattavuus":
                 setattr(combined, "coverage-"+data.age, data.value.replace(',', '.'))
+            elif data.measure == "Asukkaita":
+                setattr(combined, "population-"+data.age, int(data.value))
             else:
                 raise Exception("Unknown measure %s" % data.measure)
             
@@ -154,12 +168,13 @@ class VaxPopulation(THLData):
 class VaxProduct(THLData):
     name = "vaxproduct"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_age-518413"    
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413"    
 
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
         "cov_vac_age": "age",
+        "cov_vac_dose": "dose",
         "vacprod": "product",
     }
 
@@ -167,8 +182,12 @@ class VaxProduct(THLData):
         "Kaikki alueet": "Koko maa",
         "Kaikki ajat": "Yhteensä",
         "Kaikki iät": "all",
+        "Ensimmäinen annos": "first",
+        "Toinen annos": "second",
+        "Kaikki annokset": "all",
         "Comirnaty (BioNTech)": "Pfizer",
         "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
+        "Spikevax (MODERNA)": "Moderna",
         "Vaxzevria (AstraZeneca)": "AstraZeneca",
         "COVID-19 Vaccine Janssen (JANSSEN-CILAG)": "Janssen",
     }
@@ -177,17 +196,65 @@ class VaxProduct(THLData):
         data = requests.get(self.url, headers=requestheaders)
         data.raise_for_status()
         p = Parser(data=data.json())
-        lastweekareaprod = None
+        lastdata = None
         combined = VaxProdData()
         for data in p.parse(mapper=self):
-            if lastweekareaprod and (data.week, data.area, data.product) != lastweekareaprod:
+            if lastdata and (data.week, data.area, data.product, data.dose) != lastdata:
                 print(combined.tojson(), file=output)
                 combined = VaxProdData()
 
-            lastweekareaprod = (data.week, data.area, data.product)
+            lastdata = (data.week, data.area, data.product, data.dose)
             combined.week = data.week
             combined.area = data.area
             combined.product = data.product
+            combined.dose = data.dose
+            combined.datadate = str(self.datadate)
+            setattr(combined, data.age, int(data.value))
+            
+        print(combined.tojson(), file=output)
+
+
+class VaxProductAreas(THLData):
+    name = "vaxproductareas"
+
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-518413"    
+
+    fieldmap = {
+        "hcdmunicipality2020": "area",
+        "cov_vac_age": "age",
+        "cov_vac_dose": "dose",
+        "vacprod": "product",
+    }
+
+    valuemap = {
+        "Kaikki Tuotteet": "all",
+        "Kaikki iät": "all",
+        "Comirnaty (BioNTech)": "Pfizer",
+        "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
+        "Spikevax (MODERNA)": "Moderna",
+        "Vaxzevria (AstraZeneca)": "AstraZeneca",
+        "COVID-19 Vaccine Janssen (JANSSEN-CILAG)": "Janssen",
+        "Ensimmäinen annos": "first",
+        "Toinen annos": "second",
+        "Kaikki annokset": "all",
+    }
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        lastdoseareaprod = None
+        combined = VaxProdAreaData()
+        for data in p.parse(mapper=self):
+            if lastdoseareaprod and (data.dose, data.area, data.product) != lastdoseareaprod:
+                print(combined.tojson(), file=output)
+                combined = VaxProdAreaData()
+
+            lastdoseareaprod = (data.dose, data.area, data.product)
+            combined.area = data.area
+            combined.product = data.product
+            combined.dose = data.dose
             combined.datadate = str(self.datadate)
             setattr(combined, data.age, int(data.value))
             
@@ -231,17 +298,64 @@ class VaxMunicipalities(THLData):
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
             if data.measure == "Rokotettuja henkilöitä":
-                setattr(combined, "doses-"+data.age, int(data.value))
+                setattr(combined, "persons-"+data.age, int(data.value))
             elif data.measure == "Rokotuskattavuus":
                 setattr(combined, "coverage-"+data.age, data.value.replace(',', '.'))
             elif data.measure == "Annettuja annoksia":
-                setattr(combined, "persons-"+data.age, int(data.value))
+                setattr(combined, "doses-"+data.age, int(data.value))
             elif data.measure == "Asukkaita":
                 setattr(combined, "population-"+data.age, int(data.value))
             else:
                 print(data.tojson())
                 raise Exception("Unknown measure %s" % data.measure)
            
+        print(combined.tojson(), file=output)
+
+class VaxDays(THLData):
+    name = "vaxdays"
+
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=dateweek20201226-525459L&filter=measure-533175&column=vacprod-533726&column=cov_vac_dose-533170L"
+
+    fieldmap = {
+        "dateweek20201226": "date",
+        "cov_vac_dose": "dose",
+        "vacprod": "product",
+    }
+
+    valuemap = {
+        "Ensimmäinen annos": "first",
+        "Toinen annos": "second",
+        "Comirnaty (BioNTech)": "Pfizer",
+        "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
+        "Spikevax (MODERNA)": "Moderna",
+        "Vaxzevria (AstraZeneca)": "AstraZeneca",
+        "COVID-19 Vaccine Janssen (JANSSEN-CILAG)": "Janssen",
+        "Kaikki tuotteet": "all",
+    }
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        lastdata = None
+        combined = VaxDayData()
+        for data in p.parse(mapper=self):
+            if lastdata and (data.date, data.product) != lastdata:
+                print(combined.tojson(), file=output)
+                combined = VaxDayData()
+
+            lastdata = (data.date, data.product)
+            combined.date = data.date
+            combined.product = data.product
+            combined.datadate = str(self.datadate)
+            if data.dose == "first":
+                combined.first = int(data.value)
+            elif data.dose == "second":
+                combined.second = int(data.value)
+            else:
+                print(data.tojson())
+                raise Exception("Unknown dose %s" % data.dose)
+
         print(combined.tojson(), file=output)
 
 
