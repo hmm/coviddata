@@ -32,12 +32,14 @@ class VaxDayData(ParserData):
 class VaxWeeks(THLData):
     name = "vaxweeks"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-630311"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
         "cov_vac_age": "age",
+        "cov_vac_age1": "age2",
         "cov_vac_dose": "dose",
     }
 
@@ -58,6 +60,7 @@ class VaxWeeks(THLData):
         lastweekareadose = None
         combined = VaxWeekData()
         for data in p.parse(mapper=self):
+            #print(data.tojson())
             if lastweekareadose and (data.week, data.area, data.dose) != lastweekareadose:
                 print(combined.tojson(), file=output)
                 combined = VaxWeekData()
@@ -67,10 +70,14 @@ class VaxWeeks(THLData):
             combined.area = data.area
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
-            if data.value == '..':
-                setattr(combined, "doses-"+data.age, None)
+            if data.age2 == 'Yhteensä':
+                agefield = data.age
             else:
-                setattr(combined, "doses-"+data.age, int(data.value))
+                agefield = data.age2
+            if data.value == '..':
+                setattr(combined, "doses-"+agefield, None)
+            else:
+                setattr(combined, "doses-"+agefield, int(data.value))
             
         print(combined.tojson(), file=output)
 
@@ -78,13 +85,15 @@ class VaxWeeks(THLData):
 class VaxCoverage(THLData):
     name = "vaxcoverage"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-518413"
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-630311"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-630311"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
         "cov_vac_age": "age",
+        "cov_vac_age1": "age2",
         "cov_vac_dose": "dose",
     }
 
@@ -113,14 +122,18 @@ class VaxCoverage(THLData):
             combined.area = data.area
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
+            if data.age2 == 'Yhteensä':
+                agefield = data.age
+            else:
+                agefield = data.age2
             if data.measure == "Rokotettuja henkilöitä":
-                setattr(combined, "persons-"+data.age, int(data.value))
+                setattr(combined, "persons-"+agefield, int(data.value))
             elif data.measure == "Annettuja annoksia":
-                setattr(combined, "doses-"+data.age, int(data.value))
+                setattr(combined, "doses-"+agefield, int(data.value))
             elif data.measure == "Rokotuskattavuus":
-                setattr(combined, "coverage-"+data.age, data.value.replace(',', '.'))
+                setattr(combined, "coverage-"+agefield, data.value.replace(',', '.'))
             elif data.measure == "Asukkaita":
-                setattr(combined, "population-"+data.age, int(data.value))
+                setattr(combined, "population-"+agefield, int(data.value))
             else:
                 raise Exception("Unknown measure %s" % data.measure)
             
@@ -130,12 +143,15 @@ class VaxCoverage(THLData):
 class VaxPopulation(THLData):
     name = "vaxpopulation"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413"    
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-630311."
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
         "cov_vac_age": "age",
+        "cov_vac_age1": "age2",
         "cov_vac_dose": "dose",
     }
 
@@ -156,6 +172,7 @@ class VaxPopulation(THLData):
         lastarea = None
         combined = VaxPopData()
         for data in p.parse(mapper=self):
+            #print(data.tojson())
             if lastarea and data.area != lastarea:
                 print(combined.tojson(), file=output)
                 combined = VaxPopData()
@@ -163,7 +180,11 @@ class VaxPopulation(THLData):
             lastarea = data.area
             combined.area = data.area
             combined.datadate = str(self.datadate)
-            setattr(combined, data.age, int(data.value))
+            if data.age2 == 'Yhteensä':
+                setattr(combined, data.age, int(data.value))
+            else:
+                setattr(combined, data.age2, int(data.value))
+                
             
         print(combined.tojson(), file=output)
 
@@ -171,7 +192,7 @@ class VaxPopulation(THLData):
 class VaxProduct(THLData):
     name = "vaxproduct"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413"    
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413."
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -221,8 +242,10 @@ class VaxProduct(THLData):
 class VaxProductAreas(THLData):
     name = "vaxproductareas"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413"
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-518413"    
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413."
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-630311"
+    
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-630311"    
 
     fieldmap = {
         "hcdmunicipality2020": "area",
@@ -269,12 +292,13 @@ class VaxProductAreas(THLData):
 class VaxMunicipalities(THLData):
     name = "vaxmunicipalities"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
         "cov_vac_age": "age",
+        "cov_vac_age1": "age2",
         "cov_vac_dose": "dose",
     }
 
@@ -303,14 +327,18 @@ class VaxMunicipalities(THLData):
             combined.area = data.area
             combined.dose = data.dose
             combined.datadate = str(self.datadate)
+            if data.age2 == 'Yhteensä':
+                agefield = data.age
+            else:
+                agefield = data.age2
             if data.measure == "Rokotettuja henkilöitä":
-                setattr(combined, "persons-"+data.age, int(data.value))
+                setattr(combined, "persons-"+agefield, int(data.value))
             elif data.measure == "Rokotuskattavuus":
-                setattr(combined, "coverage-"+data.age, data.value.replace(',', '.'))
+                setattr(combined, "coverage-"+agefield, data.value.replace(',', '.'))
             elif data.measure == "Annettuja annoksia":
-                setattr(combined, "doses-"+data.age, int(data.value))
+                setattr(combined, "doses-"+agefield, int(data.value))
             elif data.measure == "Asukkaita":
-                setattr(combined, "population-"+data.age, int(data.value))
+                setattr(combined, "population-"+agefield, int(data.value))
             else:
                 print(data.tojson())
                 raise Exception("Unknown measure %s" % data.measure)
@@ -441,7 +469,7 @@ def main():
             if args.outputfile:
                 outputfile = args.outputfile
             else:
-                outputfile = "3-" + ds.getfilename()
+                outputfile = ds.getfilename()
             if os.path.exists(outputfile) and os.path.getsize(outputfile) > 0 and not args.overwrite:
                 print("%s exists" % outputfile)
                 return
