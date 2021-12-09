@@ -32,8 +32,8 @@ class VaxDayData(ParserData):
 class VaxWeeks(THLData):
     name = "vaxweeks"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-630311"
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-630311"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -85,9 +85,9 @@ class VaxWeeks(THLData):
 class VaxCoverage(THLData):
     name = "vaxcoverage"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-630311"
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-630311"
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-630311"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-630311"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -143,9 +143,9 @@ class VaxCoverage(THLData):
 class VaxPopulation(THLData):
     name = "vaxpopulation"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L"
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-630311."
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L"
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-630311."
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -192,7 +192,7 @@ class VaxPopulation(THLData):
 class VaxProduct(THLData):
     name = "vaxproduct"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413."
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413."
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -242,10 +242,10 @@ class VaxProduct(THLData):
 class VaxProductAreas(THLData):
     name = "vaxproductareas"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413."
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-630311"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413."
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-630311"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-630311"    
+    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-630311"    
 
     fieldmap = {
         "hcdmunicipality2020": "area",
@@ -292,7 +292,7 @@ class VaxProductAreas(THLData):
 class VaxMunicipalities(THLData):
     name = "vaxmunicipalities"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -348,7 +348,7 @@ class VaxMunicipalities(THLData):
 class VaxDays(THLData):
     name = "vaxdays"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19covprev/fact_cov19covprev.json?row=dateweek20201226-525459L&filter=measure-533175&column=vacprod-533726&column=cov_vac_dose-533170L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=dateweek20201226-525459L&filter=measure-533175&column=vacprod-533726&column=cov_vac_dose-533170L"
 
     fieldmap = {
         "dateweek20201226": "date",
