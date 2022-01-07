@@ -11,6 +11,9 @@ ttr: ttr-ages
 
 vax: vax-coverage vax-weeks vax-product vax-population vax-municipalities vax-productareas vax-days
 
+vaxinc: vaxinc-cases vaxinc-patients vaxinc-icu vaxinc-deaths
+vaxstat: vaxstat-cases vaxstat-patients vaxstat-icu vaxstat-deaths vaxstat-personmonths
+
 
 thl-%:
 	./thldata.py $*
@@ -23,3 +26,9 @@ ttr-%:
 
 vax-%:
 	./vaxdata.py vax$*
+
+vaxstat-%:
+	./vaxincdata.py vaxstat$*
+
+vaxinc-%:
+	./vaxincdata.py vaxinc$*

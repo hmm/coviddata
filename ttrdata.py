@@ -50,6 +50,7 @@ class UrlGen:
     time = {
         '2020': 'time-429400',
         '2021': 'time-510113',
+        '2022': 'time-660760',
     }
 
     @classmethod
@@ -81,7 +82,7 @@ class AgeParser:
         self.data = {}
 
     def run(self, output):
-        for year in ['2020', '2021']:
+        for year in ['2020', '2021', '2022']:
             for agegroup in UrlGen.agegroups:
                 for sex in ['all', 'men', 'women']:
                     for measure in ['cases', 'incidence']:
@@ -120,7 +121,7 @@ class AgeParser:
                 .setdefault(sex, {}) \
                 [attrname] = value
 
-            if l['time'] in ['2020', '2021']:
+            if l['time'] in ['2020', '2021', '2022']:
                 total = self.data.get(l['Alue'], {}).get('total', {}).get(sex, {}).get(attrname, 0)
                 
                 self.data.setdefault(l['Alue'], {}) \
@@ -220,7 +221,7 @@ def main():
                 outputfile = args.outputfile
             else:
                 outputfile = ds.getfilename()
-            if os.path.exists(outputfile) and os.path.getsize(outputfile) > 0 and not options.overwrite:
+            if os.path.exists(outputfile) and os.path.getsize(outputfile) > 0 and not args.overwrite:
                 print("%s exists" % outputfile)
                 return
             with open(outputfile, 'w') as fp:
