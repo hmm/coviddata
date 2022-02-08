@@ -29,11 +29,13 @@ class VaxMunicipalityData(ParserData):
 class VaxDayData(ParserData):
     type = "vaxdays"
 
+class VaxAreaDayData(ParserData):
+    type = "vaxareadays"
+
 class VaxWeeks(THLData):
     name = "vaxweeks"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-630311"
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -85,10 +87,9 @@ class VaxWeeks(THLData):
 class VaxCoverage(THLData):
     name = "vaxcoverage"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.&column=measure-533172.533185.&column=cov_vac_age-630311"
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-630311"
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
-
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
+    
+    
     fieldmap = {
         "dateweek20201226": "week",
         "hcdmunicipality2020": "area",
@@ -143,9 +144,7 @@ class VaxCoverage(THLData):
 class VaxPopulation(THLData):
     name = "vaxpopulation"
     
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L"
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-630311."
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=measure-433796&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -243,9 +242,6 @@ class VaxProductAreas(THLData):
     name = "vaxproductareas"
 
     url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413."
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-630311"
-    
-    #url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533726&column=measure-533175&column=cov_vac_age-630311"    
 
     fieldmap = {
         "hcdmunicipality2020": "area",
@@ -292,7 +288,7 @@ class VaxProductAreas(THLData):
 class VaxMunicipalities(THLData):
     name = "vaxmunicipalities"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-610735L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -382,6 +378,51 @@ class VaxDays(THLData):
             lastdata = (data.date, data.product)
             combined.date = data.date
             combined.product = data.product
+            combined.datadate = str(self.datadate)
+            if data.dose == "first":
+                combined.first = int(data.value)
+            elif data.dose == "second":
+                combined.second = int(data.value)
+            elif data.dose == "third":
+                combined.third = int(data.value)
+            else:
+                print(data.tojson())
+                raise Exception("Unknown dose %s" % data.dose)
+
+        print(combined.tojson(), file=output)
+
+class VaxAreaDays(THLData):
+    name = "vaxareadays"
+
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=dateweek20201226-525459L&filter=measure-533175&column=area-518362&column=cov_vac_dose-533170L"
+
+    fieldmap = {
+        "dateweek20201226": "date",
+        "cov_vac_dose": "dose",
+        "vacprod": "product",
+    }
+
+    valuemap = {
+        "Ensimmäinen annos": "first",
+        "Toinen annos": "second",
+        "Kolmas annos": "third",
+        "Kaikki tuotteet": "all",
+    }
+
+    def run(self, output):
+        data = requests.get(self.url, headers=requestheaders)
+        data.raise_for_status()
+        p = Parser(data=data.json())
+        lastdata = None
+        combined = VaxAreaDayData()
+        for data in p.parse(mapper=self):
+            if lastdata and (data.date, data.area) != lastdata:
+                print(combined.tojson(), file=output)
+                combined = VaxAreaDayData()
+
+            lastdata = (data.date, data.area)
+            combined.date = data.date
+            combined.area = data.area
             combined.datadate = str(self.datadate)
             if data.dose == "first":
                 combined.first = int(data.value)
