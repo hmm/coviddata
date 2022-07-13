@@ -35,7 +35,7 @@ class VaxAreaDayData(ParserData):
 class VaxWeeks(THLData):
     name = "vaxweeks"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=cov_vac_dose-533174.533170.533164.639082.701924.&column=measure-533175&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -52,6 +52,7 @@ class VaxWeeks(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
     }
 
@@ -87,7 +88,7 @@ class VaxWeeks(THLData):
 class VaxCoverage(THLData):
     name = "vaxcoverage"
     
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=cov_vac_dose-533170.533164.639082.701924.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
     
     
     fieldmap = {
@@ -105,6 +106,7 @@ class VaxCoverage(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
     }
 
@@ -161,6 +163,7 @@ class VaxPopulation(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
     }
 
@@ -208,6 +211,7 @@ class VaxProduct(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
         "Comirnaty (BioNTech)": "Pfizer",
         "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
@@ -261,6 +265,7 @@ class VaxProductAreas(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
     }
 
@@ -288,7 +293,7 @@ class VaxProductAreas(THLData):
 class VaxMunicipalities(THLData):
     name = "vaxmunicipalities"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=cov_vac_dose-533174.533170.533164.639082.701924.&column=measure-533175.533172.533185.433796.&column=cov_vac_age-518413L&column=cov_vac_age-660962L"
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -305,6 +310,7 @@ class VaxMunicipalities(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki annokset": "all",
     }
 
@@ -356,6 +362,7 @@ class VaxDays(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Comirnaty (BioNTech)": "Pfizer",
         "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
         "Spikevax (MODERNA)": "Moderna",
@@ -385,6 +392,8 @@ class VaxDays(THLData):
                 combined.second = int(data.value)
             elif data.dose == "third":
                 combined.third = int(data.value)
+            elif data.dose == "fourth":
+                combined.fourth = int(data.value)
             else:
                 print(data.tojson())
                 raise Exception("Unknown dose %s" % data.dose)
@@ -406,6 +415,7 @@ class VaxAreaDays(THLData):
         "Ensimmäinen annos": "first",
         "Toinen annos": "second",
         "Kolmas annos": "third",
+        "Neljäs annos": "fourth",
         "Kaikki tuotteet": "all",
     }
 
