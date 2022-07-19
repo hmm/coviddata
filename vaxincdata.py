@@ -15,12 +15,17 @@ class VaxStatData(ParserData):
         if datatype:
             self.type = datatype
 
+def tofloat(self, v):
+    return float(v.replace(',', '.'))
 
 class VaxStatBase(THLData):
+
     valuemap = {
         "Ei rokotussuojaa": "none",
         "Osittainen rokotussuoja": "partial",
         "Täysi rokotussuoja": "full",
+        "Täysi rokotussuoja ilman tehostetta": "full",
+        "Täysi rokotussuoja ja tehoste": "booster",
         "Koko väestö": "all",
         "12-29 vuotiaat": "12-29",
         "30-49 vuotiaat": "30-49",
@@ -113,7 +118,7 @@ class VaxStatPersonMonths(VaxStatBase):
 
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19inci/fact_epirapo_covid19inci.json?row=quadrimestermonth-642743L&column=inciagegroup-639348&row=incivacstatus-639350&filter=measure-650912"
     datatype = "vaxstatpersonmonths"
-    valuetype = float
+    valuetype = tofloat
     
 
 class VaxIncPatients(VaxStatBase):
@@ -122,7 +127,7 @@ class VaxIncPatients(VaxStatBase):
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19inci/fact_epirapo_covid19inci.json?row=quadrimestermonth-642743L&column=inciagegroup-639348&row=incivacstatus-639350&filter=measure-642065"
 
     datatype = "vaxincpatients"
-    valuetype = float
+    valuetype = tofloat
     
 
 class VaxIncICU(VaxStatBase):
@@ -130,7 +135,7 @@ class VaxIncICU(VaxStatBase):
 
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19inci/fact_epirapo_covid19inci.json?row=quadrimestermonth-642743L&column=inciagegroup-639348&row=incivacstatus-639350&filter=measure-642062"
     datatype = "vaxincicu"
-    valuetype = float
+    valuetype = tofloat
 
     
 class VaxIncDeaths(VaxStatBase):
@@ -138,7 +143,7 @@ class VaxIncDeaths(VaxStatBase):
 
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19inci/fact_epirapo_covid19inci.json?row=quadrimestermonth-642743L&column=inciagegroup-639348&row=incivacstatus-639350&filter=measure-642064"
     datatype = "vaxincdeaths"
-    valuetype = float
+    valuetype = tofloat
 
     
 class VaxIncCases(VaxStatBase):
@@ -146,7 +151,7 @@ class VaxIncCases(VaxStatBase):
 
     url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19inci/fact_epirapo_covid19inci.json?row=quadrimestermonth-642743L&column=inciagegroup-639348&row=incivacstatus-639350&filter=measure-642063"
     datatype = "vaxinccases"
-    valuetype = float
+    valuetype = tofloat
 
     
     
