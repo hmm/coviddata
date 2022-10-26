@@ -410,7 +410,11 @@ class THLSairaalat(THLData):
         "Oulun yliopistollisen sairaalan erityisvastuualue": "OYS",
         "Tampereen yliopistollisen sairaalan erityisvastuualue": "TAYS",
         "Turun yliopistollisen sairaalan erityisvastuualue": "TYKS",
-
+        
+        "Käynnissä olevat osastojaksot perusterveydenhuollon osastolla, koronan kanssa ja koronan vuoksi": "perus",
+        "Käynnissä olevat osastojaksot erikoissairaanhoidon osastoilla, koronan kanssa ja koronan vuoksi": "erikois",
+        "Käynnissä olevat tehohoitojaksot, koronan kanssa ja koronan vuoksi": "teho",
+        
         "Käynnissä olevat osastojaksot perusterveydenhuollon osastolla": "perus",
         "Käynnissä olevat osastojaksot erikoissairaanhoidon osastoilla": "erikois",
         "Käynnissä olevat tehohoitojaksot": "teho",
