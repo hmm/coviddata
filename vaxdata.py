@@ -194,7 +194,7 @@ class VaxPopulation(THLData):
 class VaxProduct(THLData):
     name = "vaxproduct"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533170L&column=cov_vac_age-518413."
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518362&column=dateweek20201226-525425&column=vacprod-533729.533761.547315.533741.&column=measure-533175&column=cov_vac_dose-533174L&column=cov_vac_age-518413."
 
     fieldmap = {
         "dateweek20201226": "week",
@@ -212,6 +212,7 @@ class VaxProduct(THLData):
         "Toinen annos": "second",
         "Kolmas annos": "third",
         "Neljäs annos": "fourth",
+        "Viides annos": "fifth",
         "Kaikki annokset": "all",
         "Comirnaty (BioNTech)": "Pfizer",
         "COVID-19 Vaccine Moderna (MODERNA)": "Moderna",
@@ -245,7 +246,7 @@ class VaxProduct(THLData):
 class VaxProductAreas(THLData):
     name = "vaxproductareas"
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533170L&column=measure-533175&column=cov_vac_age-518413."
+    url = "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=area-518376L&column=vacprod-533729.533761.547315.533741.&column=cov_vac_dose-533174L&column=measure-533175&column=cov_vac_age-518413."
 
     fieldmap = {
         "hcdmunicipality2020": "area",
@@ -266,6 +267,7 @@ class VaxProductAreas(THLData):
         "Toinen annos": "second",
         "Kolmas annos": "third",
         "Neljäs annos": "fourth",
+        "Viides annos": "fifth",
         "Kaikki annokset": "all",
     }
 

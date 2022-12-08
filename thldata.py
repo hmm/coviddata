@@ -222,8 +222,7 @@ class THLAlueet(THLData):
 
 class THLTestit(THLData):
     name = "testit"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509093L&column=measure-141082"
-
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030L&column=measure-141082"
     fieldmap = {
         "dateweek20200101": "date",
         "hcdmunicipality2020": "area",
@@ -257,7 +256,7 @@ class THLTestit(THLData):
 class THLTartunnat(THLData):
     name = "tartunnat"
     datatype = InfectionData
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509093L&column=hcdmunicipality2020-445222L"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030L&column=hcdmunicipality2020-445222L"
 
     fieldmap = {
         "dateweek20200101": "date",
@@ -334,8 +333,7 @@ class THLKuolemat(THLData):
     name = "kuolemat"
     datatype = DeathsData
 
-    #url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-443702L&column=measure-492118"
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509093L&column=measure-492118"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030L&column=measure-492118"
 
     fieldmap = {
         "dateweek20200101": "date",
@@ -396,7 +394,7 @@ class THLSairaalat(THLData):
     name = "sairaalat"
     datatype = HospitalData
 
-    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19care/fact_epirapo_covid19care.json?row=dateweek20200101-509093L&row=erva-456367L&column=measure-547523.547516.456732.547531"
+    url = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19care/fact_epirapo_covid19care.json?row=dateweek20200101-509030L&row=erva-456367L&column=measure-547523.547516.456732.547531"
 
     fieldmap = {
         "dateweek20200101": "date",
